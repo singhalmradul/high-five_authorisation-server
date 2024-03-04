@@ -1,0 +1,37 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://service-registry:8761/eureka
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+server:
+  port: 9000
+
+spring:
+  application:
+    name: authorization-server
+
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          public-client:
+            registration:
+              client-id: 'public-client'
+              client-authentication-methods:
+                - 'none'
+              authorization-grant-types:
+                - 'authorization_code'
+              redirect-uris:
+                - 'http://localhost:3000/callback'
+              scopes:
+                - 'openid'
+                - 'profile'
+                - 'email'
+            require-authorization-consent: true
+            require-proof-key: true
