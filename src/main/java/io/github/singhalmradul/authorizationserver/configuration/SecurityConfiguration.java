@@ -1,9 +1,9 @@
 package io.github.singhalmradul.authorizationserver.configuration;
 
+import static jakarta.servlet.DispatcherType.FORWARD;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.applyDefaultSecurity;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 import javax.sql.DataSource;
 
@@ -61,16 +61,14 @@ public class SecurityConfiguration {
 
         http
             .authorizeHttpRequests(authorize ->
-                authorize.requestMatchers(antMatcher("/error")).permitAll().anyRequest().authenticated()
-            )
-            // Disable CSRF protection for the token endpoint
-            // (for react-auth0)
-            .csrf(csrf ->
-                csrf.ignoringRequestMatchers("/oauth2/oauth/token")
+                authorize
+                    .dispatcherTypeMatchers(FORWARD).permitAll()
+                    .requestMatchers("/error", "/css/**", "assets/**").permitAll()
+                    .anyRequest().authenticated()
             )
             // Form login handles the redirect to the login page from the
             // authorization server filter chain
-            .formLogin(withDefaults());
+            .formLogin(form->form.loginPage("/login").permitAll());
 
         return http.cors(withDefaults()).build();
     }
@@ -93,7 +91,7 @@ public class SecurityConfiguration {
 
     //     UserDetails user = withUsername("user")
     //         .password("{noop}password")
-    //         .authorities("USER")
+    //         .authorities("ROLE_USER")
     //         .build();
     //     return new InMemoryUserDetailsManager(user);
     // }

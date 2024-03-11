@@ -7,7 +7,7 @@ logging:
     web: DEBUG
     security: DEBUG
     sql: DEBUG
-    
+
 
 server:
   port: 8080
