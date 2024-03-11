@@ -19,19 +19,23 @@ spring:
   security:
     oauth2:
       authorizationserver:
+        issuer: http://localhost:9000
         client:
           public-client:
             registration:
-              client-id: 'public-client'
+              client-id: high-five
               client-authentication-methods:
-                - 'none'
+                - none
               authorization-grant-types:
-                - 'authorization_code'
+                - authorization_code
               redirect-uris:
-                - 'http://localhost:3000/callback'
+                - http://localhost:3000
               scopes:
-                - 'openid'
-                - 'profile'
-                - 'email'
+                - openid
+                - profile
             require-authorization-consent: true
             require-proof-key: true
+  sql:
+    init:
+      mode: always
+      platform: postgres

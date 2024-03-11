@@ -1,0 +1,52 @@
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    web: DEBUG
+    security: DEBUG
+    sql: DEBUG
+    
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: authorization-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/high-five
+    username: postgres
+    password: postgres
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: always
+      platform: postgres
+
+  security:
+    oauth2:
+      authorizationserver:
+        issuer: http://localhost:8080
+        client:
+          high-five:
+            registration:
+              client-id:  high-five
+              client-authentication-methods:
+                - 'none'
+              authorization-grant-types:
+                - 'authorization_code'
+              redirect-uris:
+                - http://localhost:3000
+              scopes:
+                - openid
+                - profile
+            require-authorization-consent: true
+            require-proof-key: true

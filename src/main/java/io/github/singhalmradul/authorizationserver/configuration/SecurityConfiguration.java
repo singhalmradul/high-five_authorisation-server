@@ -2,17 +2,19 @@ package io.github.singhalmradul.authorizationserver.configuration;
 
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.core.userdetails.User.withUsername;
 import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.applyDefaultSecurity;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
+import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -59,7 +61,7 @@ public class SecurityConfiguration {
 
         http
             .authorizeHttpRequests(authorize ->
-                authorize.anyRequest().authenticated()
+                authorize.requestMatchers(antMatcher("/error")).permitAll().anyRequest().authenticated()
             )
             // Disable CSRF protection for the token endpoint
             // (for react-auth0)
@@ -86,13 +88,19 @@ public class SecurityConfiguration {
         return source;
     }
 
-    @Bean
-    InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+    // @Bean
+    // InMemoryUserDetailsManager inMemoryUserDetailsManager() {
 
-        UserDetails user = withUsername("user")
-            .password("{noop}password")
-            .authorities("USER")
-            .build();
-        return new InMemoryUserDetailsManager(user);
+    //     UserDetails user = withUsername("user")
+    //         .password("{noop}password")
+    //         .authorities("USER")
+    //         .build();
+    //     return new InMemoryUserDetailsManager(user);
+    // }
+
+    @Bean
+    @Primary
+    JdbcUserDetailsManager userDetialsManager(DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
     }
 }
