@@ -1,51 +1,55 @@
-// package io.github.singhalmradul.authorizationserver.model;
+package io.github.singhalmradul.authorizationserver.model;
 
-// import java.time.Instant;
+import static jakarta.persistence.GenerationType.UUID;
 
-// import jakarta.persistence.Column;
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.Id;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
-// import lombok.Setter;
+import java.time.Instant;
 
-// @Entity
-// @Getter
-// @Setter
-// @NoArgsConstructor
-// public class Client {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-//     @Id
-//     private String id;
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+public class Client {
 
-//     private String clientId;
+    @Id
+    @GeneratedValue(strategy = UUID)
+    private String id;
 
-//     private Instant clientIdIssuedAt;
+    private String clientId;
 
-//     private String clientSecret;
+    private Instant clientIdIssuedAt;
 
-//     private Instant clientSecretExpiresAt;
+    private String clientSecret;
 
-//     private String clientName;
+    private Instant clientSecretExpiresAt;
 
-//     @Column(length = 1000)
-//     private String clientAuthenticationMethods;
+    private String clientName;
 
-//     @Column(length = 1000)
-//     private String authorizationGrantTypes;
+    @Column(length = 1000)
+    private String clientAuthenticationMethods;
 
-//     @Column(length = 1000)
-//     private String redirectUris;
+    @Column(length = 1000)
+    private String authorizationGrantTypes;
 
-//     @Column(length = 1000)
-//     private String postLogoutRedirectUris;
+    @Column(length = 1000)
+    private String redirectUris;
 
-//     @Column(length = 1000)
-//     private String scopes;
+    @Column(length = 1000)
+    private String postLogoutRedirectUris;
 
-//     @Column(length = 2000)
-//     private String clientSettings;
+    @Column(length = 1000)
+    private String scopes;
 
-//     @Column(length = 2000)
-//     private String tokenSettings;
-// }
+    @Column(length = 2000)
+    private String clientSettings;
+
+    @Column(length = 2000)
+    private String tokenSettings;
+}

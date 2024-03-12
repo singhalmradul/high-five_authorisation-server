@@ -1,37 +1,42 @@
-// package io.github.singhalmradul.authorizationserver.repositories;
+package io.github.singhalmradul.authorizationserver.repositories;
 
-// import java.util.Optional;
+import java.util.Optional;
 
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Query;
-// import org.springframework.data.repository.query.Param;
-// import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-// import io.github.singhalmradul.authorizationserver.model.Authorization;
+import io.github.singhalmradul.authorizationserver.model.Authorization;
 
-// @Repository
-// public interface AuthorizationRepository extends JpaRepository<Authorization, String> {
-//     Optional<Authorization> findByState(String state);
+@Repository
+public interface AuthorizationRepository extends JpaRepository<Authorization, String> {
+    Optional<Authorization> findByState(String state);
 
-//     Optional<Authorization> findByAuthorizationCodeValue(String authorizationCode);
+    Optional<Authorization> findByAuthorizationCodeValue(String authorizationCode);
 
-//     Optional<Authorization> findByAccessTokenValue(String accessToken);
+    Optional<Authorization> findByAccessTokenValue(String accessToken);
 
-//     Optional<Authorization> findByRefreshTokenValue(String refreshToken);
+    Optional<Authorization> findByRefreshTokenValue(String refreshToken);
 
-//     Optional<Authorization> findByOidcIdTokenValue(String idToken);
+    Optional<Authorization> findByOidcIdTokenValue(String idToken);
 
-//     Optional<Authorization> findByUserCodeValue(String userCode);
+    Optional<Authorization> findByUserCodeValue(String userCode);
 
-//     Optional<Authorization> findByDeviceCodeValue(String deviceCode);
+    Optional<Authorization> findByDeviceCodeValue(String deviceCode);
 
-//     @Query("select a from Authorization a where a.state = :token" +
-//             " or a.authorizationCodeValue = :token" +
-//             " or a.accessTokenValue = :token" +
-//             " or a.refreshTokenValue = :token" +
-//             " or a.oidcIdTokenValue = :token" +
-//             " or a.userCodeValue = :token" +
-//             " or a.deviceCodeValue = :token")
-//     Optional<Authorization> findByStateOrAuthorizationCodeValueOrAccessTokenValueOrRefreshTokenValueOrOidcIdTokenValueOrUserCodeValueOrDeviceCodeValue(
-//             @Param("token") String token);
-// }
+    @Query("""
+        SELECT a
+        FROM Authorization a
+        WHERE a.state = :token
+            OR a.authorizationCodeValue = :token
+            OR a.accessTokenValue = :token
+            OR a.refreshTokenValue = :token
+            OR a.oidcIdTokenValue = :token
+            OR a.userCodeValue = :token
+            OR a.deviceCodeValue = :token
+    """)
+    Optional<Authorization> findByStateOrAuthorizationCodeValueOrAccessTokenValueOrRefreshTokenValueOrOidcIdTokenValueOrUserCodeValueOrDeviceCodeValue(
+        @Param("token") String token
+    );
+}

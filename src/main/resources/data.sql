@@ -1,37 +1,35 @@
--- -- INSERT INTO client (
--- --     id,
--- --     client_id,
--- --     client_secret,
--- --     client_name,
--- --     client_authentication_methods,
--- --     authorization_grant_types,
--- --     redirect_uris,
--- --     scopes,
--- --     client_settings,
--- --     token_settings
--- -- ) VALUES (
--- --     'high-five',
--- --     'high-five',
--- --     'none',
--- --     'high-five',
--- --     'none',
--- --     'authorization_code',
--- --     'http://localhost:3000',
--- --     'openid,profile',
--- --     '{"require-authorization-consent": true}',
--- --     '{"require-proof-key": true}'
--- -- );
+BEGIN TRANSACTION;
 
--- BEGIN TRANSACTION;
+-- INSERT INTO client (
+--     client_id,
+--     client_secret,
+--     client_name,
+--     client_authentication_methods,
+--     authorization_grant_types,
+--     redirect_uris,
+--     scopes,
+--     client_settings,
+--     token_settings
+-- ) VALUES (
+--     'high-five',
+--     'none',
+--     'high-five',
+--     'none',
+--     'authorization_code',
+--     'http://localhost:3000',
+--     'openid,profile',
+--     '{"@class":"java.util.HashMap","settings.client.require-proof-key":true,"settings.client.require-authorization-consent":true}',
+--     '{"@class":"java.util.HashMap","settings.token.refresh-token-time-to-live":["java.time.Duration",3600.000000000],"settings.token.access-token-format":{"@class":"org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat","value":"self-contained"},"settings.token.authorization-code-time-to-live":["java.time.Duration",300.000000000],"settings.token.reuse-refresh-tokens":true,"settings.token.access-token-time-to-live":["java.time.Duration",300.000000000],"settings.token.device-code-time-to-live":["java.time.Duration",300.000000000],"settings.token.id-token-signature-algorithm":["org.springframework.security.oauth2.jose.jws.SignatureAlgorithm","RS256"]}'
+-- );
 
 -- INSERT INTO users (
 --     username,
 --     email,
 --     password
 -- ) VALUES (
---     'user',
---     'e@mail.io',
---     '{noop}password'
+--     'singhalmradul',
+--     'singhalmradul@gmail.com',
+--     '{noop}Aa1@@1aA'
 -- ), (
 --     'hawksea',
 --     'hawksea@email.io',
@@ -70,7 +68,5 @@
 --     'ROLE_USER'
 -- );
 
--- COMMIT;
 
-BEGIN TRANSACTION;
 COMMIT;

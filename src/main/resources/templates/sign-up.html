@@ -21,7 +21,7 @@
 				<label for="username or email">username or email</label>
 				<input
 					type="text"
-					name="username-or-email"
+					name="username"
 					placeholder="username or email"
 					id="username or email"
 					minlength="1"
@@ -40,18 +40,27 @@
 					id="password"
 					minlength="8"
 					maxlength="127"
-					title='password must be at least 8 characters long'
 					required
 				/>
 
-				<!-- <input
+                <input
+					type="password"
+					name="confirm-password"
+					placeholder="password"
+					id="password"
+					minlength="8"
+					maxlength="127"
+					required
+				/>
+
+				<input
 					type="hidden"
 					name="${_csrf.parameterName}"
 					value="${_csrf.token}"
-				/> -->
+				/>
 				<input type="submit" value="log in" />
 
-				<a href='/sign-up'>new here? create an account</a>
+				<span>new here? create an account</span>
 			</form>
 		</div>
 	</body>

@@ -51,7 +51,7 @@ form {
 	user-select: none;
 }
 form * {
-	color: #ffffff;
+	color: #000;
 	outline: none;
 	border: none;
 }
@@ -68,8 +68,8 @@ label {
 	font-size: 16px;
 	font-weight: 500;
 }
+
 input {
-	display: block;
 	height: 50px;
 	width: 100%;
 	background-color: rgba(0, 0, 0, 0.07);
@@ -79,9 +79,7 @@ input {
 	font-size: 14px;
 	font-weight: 300;
 }
-::placeholder {
-	color: #e5e5e5;
-}
+
 input[type='submit'] {
 	margin-top: 50px;
 	width: 100%;
@@ -91,8 +89,6 @@ input[type='submit'] {
 	font-size: 18px;
 	font-weight: 600;
 	border-radius: 25px;
+	margin-bottom: 20px;
 	cursor: pointer;
-}
-span {
-	margin-top: 30px;
 }
