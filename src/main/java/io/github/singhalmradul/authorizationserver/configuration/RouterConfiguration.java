@@ -1,6 +1,5 @@
 package io.github.singhalmradul.authorizationserver.configuration;
 
-import static org.springframework.web.servlet.function.RequestPredicates.GET;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 import static org.springframework.web.servlet.function.ServerResponse.ok;
 
@@ -14,8 +13,11 @@ public class RouterConfiguration {
 
     @Bean
     RouterFunction<ServerResponse> routerFunction() {
-        return route(GET("/login"),
-                request -> ok().render("login"));
+        return route()
+            .GET("/login", request -> ok().render("login"))
+            .GET("/signup", request -> ok().render("signup"))
+            .build();
+
     }
 
 }

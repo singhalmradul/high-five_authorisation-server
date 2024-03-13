@@ -3,6 +3,7 @@ package io.github.singhalmradul.authorizationserver.model;
 import static jakarta.persistence.GenerationType.UUID;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ public class Authorization {
 
     @Id
     @GeneratedValue(strategy = UUID)
-    private String id;
+    private UUID id;
 
     private String registeredClientId;
 

@@ -1,7 +1,5 @@
 package io.github.singhalmradul.authorizationserver.services;
 
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
@@ -9,6 +7,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.springframework.dao.DataRetrievalFailureException;
@@ -30,6 +29,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
@@ -49,8 +49,8 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         RegisteredClientRepository registeredClientRepository
     ) {
 
-        notNull(authorizationRepository, "authorizationRepository cannot be null");
-        notNull(registeredClientRepository, "registeredClientRepository cannot be null");
+        Assert.notNull(authorizationRepository, "authorizationRepository cannot be null");
+        Assert.notNull(registeredClientRepository, "registeredClientRepository cannot be null");
 
         this.authorizationRepository = authorizationRepository;
         this.registeredClientRepository = registeredClientRepository;
@@ -62,34 +62,37 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 
+    @SuppressWarnings("null")
     @Override
     public void save(OAuth2Authorization authorization) {
 
-        notNull(authorization, "authorization cannot be null");
+        Assert.notNull(authorization, "authorization cannot be null");
 
         this.authorizationRepository.save(toEntity(authorization));
     }
 
+    @SuppressWarnings("null")
     @Override
     public void remove(OAuth2Authorization authorization) {
 
-        notNull(authorization, "authorization cannot be null");
+        Assert.notNull(authorization, "authorization cannot be null");
 
-        this.authorizationRepository.deleteById(authorization.getId());
+        this.authorizationRepository.deleteById(UUID.fromString(authorization.getId()));
     }
 
+    @SuppressWarnings("null")
     @Override
     public OAuth2Authorization findById(String id) {
 
-        hasText(id, "id cannot be empty");
+        Assert.hasText(id, "id cannot be empty");
 
-        return this.authorizationRepository.findById(id).map(this::toObject).orElse(null);
+        return this.authorizationRepository.findById(UUID.fromString(id)).map(this::toObject).orElse(null);
     }
 
     @Override
-    public OAuth2Authorization findByToken(String token, OAuth2TokenType tokenType) {
+    public OAuth2Authorization findByToken(String token, @SuppressWarnings("null") OAuth2TokenType tokenType) {
 
-        hasText(token, "token cannot be empty");
+        Assert.hasText(token, "token cannot be empty");
 
         Optional<Authorization> result;
 
@@ -141,7 +144,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         }
 
         OAuth2Authorization.Builder builder = OAuth2Authorization.withRegisteredClient(registeredClient)
-                .id(entity.getId())
+                .id(entity.getId().toString())
                 .principalName(entity.getPrincipalName())
                 .authorizationGrantType(
                     resolveAuthorizationGrantType(entity.getAuthorizationGrantType())
@@ -232,7 +235,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
 
     private Authorization toEntity(OAuth2Authorization authorization) {
         Authorization entity = new Authorization();
-        entity.setId(authorization.getId());
+        entity.setId(UUID.fromString(authorization.getId()));
         entity.setRegisteredClientId(authorization.getRegisteredClientId());
         entity.setPrincipalName(authorization.getPrincipalName());
         entity.setAuthorizationGrantType(authorization.getAuthorizationGrantType().getValue());

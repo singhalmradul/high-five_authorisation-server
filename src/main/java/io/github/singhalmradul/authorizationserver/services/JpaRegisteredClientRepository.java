@@ -1,31 +1,26 @@
 package io.github.singhalmradul.authorizationserver.services;
 
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +37,7 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
     private final ObjectMapper objectMapper = new ObjectMapper();
     public JpaRegisteredClientRepository(ClientRepository clientRepository) {
 
-        notNull(clientRepository, "clientRepository cannot be null");
+        Assert.notNull(clientRepository, "clientRepository cannot be null");
 
         this.clientRepository = clientRepository;
 
@@ -58,26 +53,28 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 
+    @SuppressWarnings("null")
     @Override
     public void save(RegisteredClient registeredClient) {
 
-        notNull(registeredClient, "registeredClient cannot be null");
+        Assert.notNull(registeredClient, "registeredClient cannot be null");
 
         this.clientRepository.save(toEntity(registeredClient));
     }
 
+    @SuppressWarnings("null")
     @Override
     public RegisteredClient findById(String id) {
 
-        hasText(id, "id cannot be empty");
+        Assert.hasText(id, "id cannot be empty");
 
-        return this.clientRepository.findById(id).map(this::toObject).orElse(null);
+        return this.clientRepository.findById(UUID.fromString(id)).map(this::toObject).orElse(null);
     }
 
     @Override
     public RegisteredClient findByClientId(String clientId) {
 
-        hasText(clientId, "clientId cannot be empty");
+        Assert.hasText(clientId, "clientId cannot be empty");
 
         return this.clientRepository.findByClientId(clientId).map(this::toObject).orElse(null);
     }
@@ -100,7 +97,7 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         );
 
         RegisteredClient.Builder builder = RegisteredClient
-            .withId(client.getId())
+            .withId(client.getId().toString())
             .clientId(client.getClientId())
             .clientIdIssuedAt(client.getClientIdIssuedAt())
             .clientSecret(client.getClientSecret())
@@ -147,7 +144,7 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
             );
 
         Client entity = new Client();
-        entity.setId(registeredClient.getId());
+        entity.setId(UUID.fromString(registeredClient.getId()));
         entity.setClientId(registeredClient.getClientId());
         entity.setClientIdIssuedAt(registeredClient.getClientIdIssuedAt());
         entity.setClientSecret(registeredClient.getClientSecret());
@@ -170,10 +167,9 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
 
     private Map<String, Object> parseMap(String data) {
         try {
-            Map<String, Object> value = this.objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
-            });
-            System.out.println("\033[1;95m"+value+"\033[0m");
-            return value;
+            return this.objectMapper.readValue(
+                data, new TypeReference<Map<String, Object>>() {}
+            );
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
@@ -190,8 +186,8 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
     private static AuthorizationGrantType resolveAuthorizationGrantType(String authorizationGrantType) {
 
         if (AuthorizationGrantType
-            .AUTHORIZATION_CODE.getValue().
-            equals(authorizationGrantType)
+            .AUTHORIZATION_CODE.getValue()
+            .equals(authorizationGrantType)
         ) {
             return AuthorizationGrantType.AUTHORIZATION_CODE;
 
@@ -202,8 +198,8 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
             return AuthorizationGrantType.CLIENT_CREDENTIALS;
 
         } else if (AuthorizationGrantType
-            .REFRESH_TOKEN.getValue().
-            equals(authorizationGrantType)
+            .REFRESH_TOKEN.getValue()
+            .equals(authorizationGrantType)
         ) {
             return AuthorizationGrantType.REFRESH_TOKEN;
         }

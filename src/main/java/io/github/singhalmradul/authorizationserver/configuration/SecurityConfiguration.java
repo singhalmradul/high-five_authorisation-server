@@ -5,28 +5,40 @@ import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.applyDefaultSecurity;
 
-import javax.sql.DataSource;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import lombok.AllArgsConstructor;
+
 /**
  * @formatter:off
  */
- @Configuration
- @EnableWebSecurity
+@Configuration
+@EnableWebSecurity
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class SecurityConfiguration {
+
+    @Qualifier("jpaUserDetailsService")
+    UserDetailsService userDetailsService;
+
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 
     @Bean
     @Order(1)
@@ -63,12 +75,13 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize ->
                 authorize
                     .dispatcherTypeMatchers(FORWARD).permitAll()
-                    .requestMatchers("/error", "/css/**", "assets/**").permitAll()
+                    .requestMatchers("/error", "/css/**", "assets/**", "/favicon.ico").permitAll()
                     .anyRequest().authenticated()
             )
             // Form login handles the redirect to the login page from the
             // authorization server filter chain
             .formLogin(form->form.loginPage("/login").usernameParameter("username-or-email").permitAll());
+            // .formLogin(withDefaults());
 
         return http.cors(withDefaults()).build();
     }
@@ -96,9 +109,16 @@ public class SecurityConfiguration {
     //     return new InMemoryUserDetailsManager(user);
     // }
 
+    // @Bean
+    // @Primary
+    // JdbcUserDetailsManager userDetialsManager(DataSource dataSource) {
+    //     return new JdbcUserDetailsManager(dataSource);
+    // }
+
+
     @Bean
-    @Primary
-    JdbcUserDetailsManager userDetialsManager(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+
 }

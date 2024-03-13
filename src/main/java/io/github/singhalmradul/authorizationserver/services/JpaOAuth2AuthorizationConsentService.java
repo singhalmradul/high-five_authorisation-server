@@ -1,8 +1,5 @@
 package io.github.singhalmradul.authorizationserver.services;
 
-import static org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent.withId;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 import java.util.HashSet;
@@ -16,6 +13,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import io.github.singhalmradul.authorizationserver.model.AuthorizationConsent;
@@ -31,17 +29,18 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
         RegisteredClientRepository registeredClientRepository
     ) {
 
-        notNull(authorizationConsentRepository, "authorizationConsentRepository cannot be null");
-        notNull(registeredClientRepository, "registeredClientRepository cannot be null");
+        Assert.notNull(authorizationConsentRepository, "authorizationConsentRepository cannot be null");
+        Assert.notNull(registeredClientRepository, "registeredClientRepository cannot be null");
 
         this.authorizationConsentRepository = authorizationConsentRepository;
         this.registeredClientRepository = registeredClientRepository;
     }
 
+    @SuppressWarnings("null")
     @Override
     public void save(OAuth2AuthorizationConsent authorizationConsent) {
 
-        notNull(authorizationConsent, "authorizationConsent cannot be null");
+        Assert.notNull(authorizationConsent, "authorizationConsent cannot be null");
 
         this.authorizationConsentRepository.save(toEntity(authorizationConsent));
     }
@@ -49,7 +48,7 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
     @Override
     public void remove(OAuth2AuthorizationConsent authorizationConsent) {
 
-        notNull(authorizationConsent, "authorizationConsent cannot be null");
+        Assert.notNull(authorizationConsent, "authorizationConsent cannot be null");
 
         this.authorizationConsentRepository.deleteByRegisteredClientIdAndPrincipalName(
                 authorizationConsent.getRegisteredClientId(),
@@ -60,8 +59,8 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
     @Override
     public OAuth2AuthorizationConsent findById(String registeredClientId, String principalName) {
 
-        hasText(registeredClientId, "registeredClientId cannot be empty");
-        hasText(principalName, "principalName cannot be empty");
+        Assert.hasText(registeredClientId, "registeredClientId cannot be empty");
+        Assert.hasText(principalName, "principalName cannot be empty");
 
         return authorizationConsentRepository
             .findByRegisteredClientIdAndPrincipalName(registeredClientId, principalName)
@@ -83,7 +82,8 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
             );
         }
 
-        OAuth2AuthorizationConsent.Builder builder = withId(
+        @SuppressWarnings("null")
+        OAuth2AuthorizationConsent.Builder builder = OAuth2AuthorizationConsent.withId(
             registeredClientId,
             authorizationConsent.getPrincipalName()
         );

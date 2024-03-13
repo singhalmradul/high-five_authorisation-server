@@ -1,6 +1,7 @@
 package io.github.singhalmradul.authorizationserver.repositories;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import io.github.singhalmradul.authorizationserver.model.Authorization;
 
 @Repository
-public interface AuthorizationRepository extends JpaRepository<Authorization, String> {
+public interface AuthorizationRepository extends JpaRepository<Authorization, UUID> {
     Optional<Authorization> findByState(String state);
 
     Optional<Authorization> findByAuthorizationCodeValue(String authorizationCode);
