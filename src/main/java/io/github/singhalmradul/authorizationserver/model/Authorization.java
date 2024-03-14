@@ -1,105 +1,109 @@
-// package io.github.singhalmradul.authorizationserver.model;
+package io.github.singhalmradul.authorizationserver.model;
 
-// import java.time.Instant;
+import static jakarta.persistence.GenerationType.UUID;
 
-// import jakarta.persistence.Column;
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.Id;
-// import jakarta.persistence.Table;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
-// import lombok.Setter;
+import java.time.Instant;
+import java.util.UUID;
 
-// @Entity
-// @Table(name = "oauth2_authorization")
-// @Getter
-// @Setter
-// @NoArgsConstructor
-// public class Authorization {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-//     @Id
-//     @Column
-//     private String id;
+@Entity
+@Table(name = "oauth2_authorization")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Authorization {
 
-//     private String registeredClientId;
+    @Id
+    @GeneratedValue(strategy = UUID)
+    private UUID id;
 
-//     private String principalName;
+    private String registeredClientId;
 
-//     private String authorizationGrantType;
+    private String principalName;
 
-//     @Column(length = 1000)
-//     private String authorizedScopes;
+    private String authorizationGrantType;
 
-//     @Column(length = 4000)
-//     private String attributes;
+    @Column(length = 1000)
+    private String authorizedScopes;
 
-//     @Column(length = 500)
-//     private String state;
+    @Column(length = 4000)
+    private String attributes;
 
-//     @Column(length = 4000)
-//     private String authorizationCodeValue;
+    @Column(length = 500)
+    private String state;
 
-//     private Instant authorizationCodeIssuedAt;
+    @Column(length = 4000)
+    private String authorizationCodeValue;
 
-//     private Instant authorizationCodeExpiresAt;
+    private Instant authorizationCodeIssuedAt;
 
-//     private String authorizationCodeMetadata;
+    private Instant authorizationCodeExpiresAt;
 
-//     @Column(length = 4000)
-//     private String accessTokenValue;
+    private String authorizationCodeMetadata;
 
-//     private Instant accessTokenIssuedAt;
+    @Column(length = 4000)
+    private String accessTokenValue;
 
-//     private Instant accessTokenExpiresAt;
+    private Instant accessTokenIssuedAt;
 
-//     @Column(length = 2000)
-//     private String accessTokenMetadata;
+    private Instant accessTokenExpiresAt;
 
-//     private String accessTokenType;
+    @Column(length = 2000)
+    private String accessTokenMetadata;
 
-//     @Column(length = 1000)
-//     private String accessTokenScopes;
+    private String accessTokenType;
 
-//     @Column(length = 4000)
-//     private String refreshTokenValue;
+    @Column(length = 1000)
+    private String accessTokenScopes;
 
-//     private Instant refreshTokenIssuedAt;
+    @Column(length = 4000)
+    private String refreshTokenValue;
 
-//     private Instant refreshTokenExpiresAt;
+    private Instant refreshTokenIssuedAt;
 
-//     @Column(length = 2000)
-//     private String refreshTokenMetadata;
+    private Instant refreshTokenExpiresAt;
 
-//     @Column(length = 4000)
-//     private String oidcIdTokenValue;
+    @Column(length = 2000)
+    private String refreshTokenMetadata;
 
-//     private Instant oidcIdTokenIssuedAt;
+    @Column(length = 4000)
+    private String oidcIdTokenValue;
 
-//     private Instant oidcIdTokenExpiresAt;
+    private Instant oidcIdTokenIssuedAt;
 
-//     @Column(length = 2000)
-//     private String oidcIdTokenMetadata;
+    private Instant oidcIdTokenExpiresAt;
 
-//     @Column(length = 2000)
-//     private String oidcIdTokenClaims;
+    @Column(length = 2000)
+    private String oidcIdTokenMetadata;
 
-//     @Column(length = 4000)
-//     private String userCodeValue;
+    @Column(length = 2000)
+    private String oidcIdTokenClaims;
 
-//     private Instant userCodeIssuedAt;
+    @Column(length = 4000)
+    private String userCodeValue;
 
-//     private Instant userCodeExpiresAt;
+    private Instant userCodeIssuedAt;
 
-//     @Column(length = 2000)
-//     private String userCodeMetadata;
+    private Instant userCodeExpiresAt;
 
-//     @Column(length = 4000)
-//     private String deviceCodeValue;
+    @Column(length = 2000)
+    private String userCodeMetadata;
 
-//     private Instant deviceCodeIssuedAt;
+    @Column(length = 4000)
+    private String deviceCodeValue;
 
-//     private Instant deviceCodeExpiresAt;
+    private Instant deviceCodeIssuedAt;
 
-//     @Column(length = 2000)
-//     private String deviceCodeMetadata;
-// }
+    private Instant deviceCodeExpiresAt;
+
+    @Column(length = 2000)
+    private String deviceCodeMetadata;
+}

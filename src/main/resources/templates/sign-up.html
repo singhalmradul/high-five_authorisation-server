@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>high-five</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap"
+			rel="stylesheet"
+		/>
+		<link th:href="@{/css/styles.css}" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="login">
+			<form th:action="@{/login}" method="POST">
+				<img th:src="@{/assets/logo.svg}" alt="logo" />
+				<h2>login</h2>
+
+				<label for="username or email">username or email</label>
+				<input
+					type="text"
+					name="username"
+					placeholder="username or email"
+					id="username or email"
+					minlength="1"
+					maxlength="15"
+					pattern="^[a-z][a-z0-9]*$"
+					title="username must contain only lowercase letter and numbers, begin with a letter, and maximum 15 characters long"
+					required
+					autofocus
+				/>
+
+				<label for="password">password</label>
+				<input
+					type="password"
+					name="password"
+					placeholder="password"
+					id="password"
+					minlength="8"
+					maxlength="127"
+					required
+				/>
+
+                <input
+					type="password"
+					name="confirm-password"
+					placeholder="password"
+					id="password"
+					minlength="8"
+					maxlength="127"
+					required
+				/>
+
+				<input
+					type="hidden"
+					name="${_csrf.parameterName}"
+					value="${_csrf.token}"
+				/>
+				<input type="submit" value="log in" />
+
+				<span>new here? create an account</span>
+			</form>
+		</div>
+	</body>
+</html>
