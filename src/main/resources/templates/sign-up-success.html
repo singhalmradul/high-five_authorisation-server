@@ -14,39 +14,26 @@
 	</head>
 	<body>
 		<div class="form-container">
-			<form th:action="@{/log-in}" method="POST">
+			<form th:action="@{/log-in}" th:object="${user}" method="POST">
 				<img th:src="@{/assets/logo.svg}" alt="logo" class="logo" />
-				<h2>log in</h2>
+				<h2>congratz!! now you're a high-five homie</h2>
 
-				<h2 th:if="${param.error != null}" class="error">
-					invalid username or password
-				</h2>
-
-				<label for="username or email">username or email</label>
 				<input
-					type="text"
+					type="hidden"
 					name="username-or-email"
-					placeholder="username or email"
-					id="username or email"
-					required
-					autofocus
+					th:value="*{username}"
+					tabindex="-1"
 				/>
 
-				<label for="password">password</label>
 				<input
-					type="password"
+					type="hidden"
 					name="password"
-					placeholder="password"
 					id="password"
-					minlength="8"
-					maxlength="127"
-					title="password must be at least 8 characters long"
-					required
+					th:value="*{password}"
+					tabindex="-1"
 				/>
 
-				<input type="submit" value="log in" />
-
-				<a href="/sign-up">new here? create an account</a>
+				<input type="submit" value="enough chit-chat, now let me in" />
 			</form>
 		</div>
 	</body>

@@ -13,12 +13,12 @@
 		<link th:href="@{/css/styles.css}" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="login">
+		<div class="form-container">
 			<form th:action="@{/sign-up}" th:object="${user}" method="POST">
 				<img th:src="@{/assets/logo.svg}" alt="logo" class="logo" />
 				<h2>sign up</h2>
 
-				<h2 th:if="${error != null}" class="error" th:text="${error}">oof</h2>
+				<h2 th:if="${error != null}" class="error" th:text="${error}" />
 
 				<label for="email">email</label>
 				<input
