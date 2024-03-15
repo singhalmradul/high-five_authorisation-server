@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
@@ -27,7 +28,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,14 +40,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonDeserialize(builder = User.UserBuilder.class)
-@Builder(builderClassName = "UserBuilder", setterPrefix = "with")
-public class User implements UserDetails {
+@AllArgsConstructor
+@JsonDeserialize
+@Builder(builderClassName = "UserBuilder")
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = UUID)
     private UUID id;
 
+    @Pattern(regexp = "^[a-z][a-z0-9]*$", message = "username must contain only lowercase letters and numbers, begin with a letter")
     @Column(unique = true, nullable = false)
     private String username;
 
@@ -54,11 +58,6 @@ public class User implements UserDetails {
 
     @JsonIgnore
     private String password;
-
-    @JsonIgnore
-    @Transient
-    @Builder.Default
-    private transient UnaryOperator<String> passwordEncoder = UnaryOperator.identity();
 
     @ManyToMany(targetEntity = Authority.class, cascade = { MERGE, PERSIST }, fetch = EAGER)
     @JoinTable(
@@ -69,43 +68,20 @@ public class User implements UserDetails {
     @JsonSerialize(converter = PersistentBagConverter.class)
     private Collection<Authority> authorities;
 
-    @Builder.Default
-    private boolean accountNonExpired = true;
+    private boolean accountNonExpired;
 
-    @Builder.Default
-    private boolean accountNonLocked = true;
+    private boolean accountNonLocked;
 
-    @Builder.Default
-    private boolean credentialsNonExpired = true;
+    private boolean credentialsNonExpired;
 
-    @Builder.Default
-    private boolean enabled = true;
+    private boolean enabled;
 
     // ---------------------------------------------------------------------------------------------------
-    public User(UUID id,
-        String username,
-        String email,
-        String password,
-        UnaryOperator<String> passwordEncoder,
-        Collection<Authority> authorities,
-        boolean accountNonExpired,
-        boolean accountNonLocked,
-        boolean credentialsNonExpired,
-        boolean enabled
-    ) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.passwordEncoder = passwordEncoder;
-        this.password = passwordEncoder.apply(password);
-        this.authorities = authorities;
-        this.accountNonExpired = accountNonExpired;
-        this.accountNonLocked = accountNonLocked;
-        this.credentialsNonExpired = credentialsNonExpired;
-        this.enabled = enabled;
+    @Override
+    public void eraseCredentials() {
+        password = null;
     }
 
-    // ---------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -125,17 +101,17 @@ public class User implements UserDetails {
         private String email;
         private String password;
         private Collection<Authority> authorities;
-        private boolean accountNonExpired;
-        private boolean accountNonLocked;
-        private boolean credentialsNonExpired;
-        private boolean enabled;
+        private boolean accountNonExpired = true;
+        private boolean accountNonLocked = true;
+        private boolean credentialsNonExpired = true;
+        private boolean enabled = true;
         private UnaryOperator<String> passwordEncoder;
 
         private UserBuilder() {
             passwordEncoder = UnaryOperator.identity();
         }
 
-        public UserBuilder withRoles(String... roles) {
+        public UserBuilder roles(String... roles) {
 
             List<Authority> authorities = new ArrayList<>(roles.length);
 
@@ -147,10 +123,15 @@ public class User implements UserDetails {
                 authorities.add(new Authority("ROLE_" + role));
             }
 
-            return withAuthorities(authorities);
+            return authorities(authorities);
         }
 
-        public UserDetails build() {
+        public UserBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+            return this;
+        }
+
+        public User build() {
             String encodedPassword = this.passwordEncoder.apply(this.password);
 
             return new User(
@@ -158,7 +139,6 @@ public class User implements UserDetails {
                 this.username,
                 this.email,
                 encodedPassword,
-                this.passwordEncoder,
                 this.authorities,
                 this.accountNonExpired,
                 this.accountNonLocked,
