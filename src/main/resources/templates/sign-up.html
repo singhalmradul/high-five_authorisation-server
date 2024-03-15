@@ -14,53 +14,63 @@
 	</head>
 	<body>
 		<div class="login">
-			<form th:action="@{/login}" method="POST">
-				<img th:src="@{/assets/logo.svg}" alt="logo" />
-				<h2>login</h2>
+			<form th:action="@{/sign-up}" th:object="${user}" method="POST">
+				<img th:src="@{/assets/logo.svg}" alt="logo" class="logo" />
+				<h2>sign up</h2>
 
-				<label for="username or email">username or email</label>
+				<h2 th:if="${error != null}" class="error" th:text="${error}">oof</h2>
+
+				<label for="email">email</label>
+				<input
+					type="email"
+					th:field="*{email}"
+					placeholder="email"
+					id="email"
+					maxlength="63"
+					required
+					autofocus
+				/>
+
+				<label for="username">pick a username</label>
 				<input
 					type="text"
-					name="username"
-					placeholder="username or email"
-					id="username or email"
+					th:field="*{username}"
+					placeholder="username"
+					id="username"
 					minlength="1"
 					maxlength="15"
 					pattern="^[a-z][a-z0-9]*$"
-					title="username must contain only lowercase letter and numbers, begin with a letter, and maximum 15 characters long"
+					title="username must contain only lowercase letters and numbers, begin with a letter, and maximum 15 characters long"
 					required
-					autofocus
 				/>
 
 				<label for="password">password</label>
 				<input
 					type="password"
-					name="password"
+					th:field="*{password}"
 					placeholder="password"
 					id="password"
 					minlength="8"
 					maxlength="127"
+					title="password must be at least 8 characters long"
 					required
 				/>
 
-                <input
-					type="password"
-					name="confirm-password"
-					placeholder="password"
-					id="password"
-					minlength="8"
-					maxlength="127"
-					required
-				/>
-
+				<label for="password">confirm password</label>
 				<input
-					type="hidden"
-					name="${_csrf.parameterName}"
-					value="${_csrf.token}"
+					type="password"
+					th:field="*{confirmPassword}"
+					placeholder="password"
+					id="confirm-password"
+					minlength="8"
+					maxlength="127"
+					title="password must be at least 8 characters long"
+					required
 				/>
-				<input type="submit" value="log in" />
 
-				<span>new here? create an account</span>
+				<input type="submit" value="sign up" />
+
+				<a href="/log-in">new here? create an account</a>
 			</form>
 		</div>
 	</body>

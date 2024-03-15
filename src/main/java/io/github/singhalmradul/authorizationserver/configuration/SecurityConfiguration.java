@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -36,8 +35,9 @@ public class SecurityConfiguration {
     @Qualifier("jpaUserDetailsService")
     UserDetailsService userDetailsService;
 
+    PasswordEncoder passwordEncoder;
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Bean
@@ -75,12 +75,18 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize ->
                 authorize
                     .dispatcherTypeMatchers(FORWARD).permitAll()
-                    .requestMatchers("/error", "/css/**", "assets/**", "/favicon.ico").permitAll()
+                    .requestMatchers(
+                        "/error",
+                        "/sign-up",
+                        "/css/**",
+                        "assets/**",
+                        "/favicon.ico"
+                    ).permitAll()
                     .anyRequest().authenticated()
             )
             // Form login handles the redirect to the login page from the
             // authorization server filter chain
-            .formLogin(form->form.loginPage("/login").usernameParameter("username-or-email").permitAll());
+            .formLogin(form->form.loginPage("/log-in").usernameParameter("username-or-email").permitAll());
             // .formLogin(withDefaults());
 
         return http.cors(withDefaults()).build();
@@ -108,17 +114,4 @@ public class SecurityConfiguration {
     //         .build();
     //     return new InMemoryUserDetailsManager(user);
     // }
-
-    // @Bean
-    // @Primary
-    // JdbcUserDetailsManager userDetialsManager(DataSource dataSource) {
-    //     return new JdbcUserDetailsManager(dataSource);
-    // }
-
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 }

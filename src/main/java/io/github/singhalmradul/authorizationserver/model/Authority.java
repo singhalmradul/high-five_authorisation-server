@@ -13,21 +13,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@JsonDeserialize
+@Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
-@JsonDeserialize
 public class Authority implements GrantedAuthority {
 
     @Id
