@@ -35,8 +35,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.github.singhalmradul.authorizationserver.model.Authorization;
-import io.github.singhalmradul.authorizationserver.repositories.AuthorizationRepository;
+import io.github.singhalmradul.authorizationserver.model.oidc.Authorization;
+import io.github.singhalmradul.authorizationserver.repositories.oidc.AuthorizationRepository;
 
 @Component
 public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService {

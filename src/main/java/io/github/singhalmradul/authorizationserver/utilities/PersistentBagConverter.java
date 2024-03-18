@@ -1,4 +1,4 @@
-package io.github.singhalmradul.authorizationserver.utils;
+package io.github.singhalmradul.authorizationserver.utilities;
 
 import java.util.ArrayList;
 import java.util.Collections;

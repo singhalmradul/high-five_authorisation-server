@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-CREATE TABLE IF NOT EXISTS client (
+CREATE TABLE IF NOT EXISTS oidc_client (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
     client_id VARCHAR(255) NOT NULL,
     client_id_issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS client (
     token_settings VARCHAR(2000) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS oauth2_authorization (
+CREATE TABLE IF NOT EXISTS oidc_authorization (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
     registered_client_id VARCHAR(255) NOT NULL,
     principal_name VARCHAR(255) NOT NULL,
@@ -53,21 +53,27 @@ CREATE TABLE IF NOT EXISTS oauth2_authorization (
     device_code_metadata VARCHAR(2000) DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS authorization_consent (
+CREATE TABLE IF NOT EXISTS oidc_authorization_consent (
     registered_client_id VARCHAR(255) NOT NULL,
     principal_name VARCHAR(255) NOT NULL,
     authorities VARCHAR(1000) NOT NULL,
     PRIMARY KEY (registered_client_id, principal_name)
 );
 
-CREATE TABLE IF NOT EXISTS user_data (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS user_account_details (
+    user_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     username VARCHAR(15) UNIQUE NOT NULL,
-    email VARCHAR(63) UNIQUE NOT NULL,
-    password VARCHAR(68) NOT NULL,
-    enabled BOOLEAN DEFAULT TRUE NOT NULL
+    email VARCHAR(63) UNIQUE NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS user_authentication_details (
+    user_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    password VARCHAR(68) NOT NULL,
+    account_non_expired BOOLEAN DEFAULT TRUE NOT NULL,
+    account_non_locked BOOLEAN DEFAULT TRUE NOT NULL,
+    credentials_non_expired BOOLEAN DEFAULT TRUE NOT NULL,
+    enabled BOOLEAN DEFAULT TRUE NOT NULL
+);
 CREATE TABLE IF NOT EXISTS authority (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     role VARCHAR(15) NOT NULL

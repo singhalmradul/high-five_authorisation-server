@@ -1,150 +1,91 @@
 package io.github.singhalmradul.authorizationserver.model;
 
-import static jakarta.persistence.CascadeType.MERGE;
-import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.FetchType.EAGER;
-import static jakarta.persistence.GenerationType.UUID;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.github.singhalmradul.authorizationserver.utils.PersistentBagConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.github.singhalmradul.authorizationserver.model.shared.UserAccountDetails;
+import io.github.singhalmradul.authorizationserver.model.user.UserAuthenticationDetails;
+import io.github.singhalmradul.authorizationserver.utilities.UserJsonDeserializer;
+import io.github.singhalmradul.authorizationserver.utilities.UserJsonSerializer;
 
-@Entity
-@Table(name = "user_data")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@JsonDeserialize
-@Builder(builderClassName = "UserBuilder")
-public class User implements UserDetails, CredentialsContainer {
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes({
+    @Type(value = User.class, name = "user")
+})
+@JsonSerialize(using = UserJsonSerializer.class)
+@JsonDeserialize(using = UserJsonDeserializer.class)
+public record User(UserAccountDetails accountDetails, UserAuthenticationDetails authenticationDetails) implements UserDetails, CredentialsContainer {
 
-    @Id
-    @GeneratedValue(strategy = UUID)
-    private UUID id;
-
-    @Pattern(regexp = "^[a-z][a-z0-9]*$", message = "username must contain only lowercase letters and numbers, begin with a letter")
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @JsonIgnore
-    private String password;
-
-    @ManyToMany(targetEntity = Authority.class, cascade = { MERGE, PERSIST }, fetch = EAGER)
-    @JoinTable(
-        name = "user_authority",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "authority_id")
-    )
-    @JsonSerialize(converter = PersistentBagConverter.class)
-    private Collection<Authority> authorities;
-
-    private boolean accountNonExpired;
-
-    private boolean accountNonLocked;
-
-    private boolean credentialsNonExpired;
-
-    private boolean enabled;
-
-    // ---------------------------------------------------------------------------------------------------
     @Override
     public void eraseCredentials() {
-        password = null;
+        authenticationDetails.eraseCredentials();
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("User [");
-        builder.append("username=").append(username).append(", ");
-        builder.append("email=").append(email);
+        builder.append("username=").append(accountDetails.getUsername()).append(", ");
+        builder.append("email=").append(accountDetails.getEmail());
         builder.append("]");
         return builder.toString();
     }
 
-    // ---------------------------------------------------------------------------------------------------
-    public static final class UserBuilder {
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authenticationDetails.getAuthorities();
+    }
 
-        private UUID id;
-        private String username;
-        private String email;
-        private String password;
-        private Collection<Authority> authorities;
-        private boolean accountNonExpired = true;
-        private boolean accountNonLocked = true;
-        private boolean credentialsNonExpired = true;
-        private boolean enabled = true;
-        private UnaryOperator<String> passwordEncoder;
+    @Override
+    public String getPassword() {
+        return authenticationDetails.getPassword();
+    }
 
-        private UserBuilder() {
-            passwordEncoder = UnaryOperator.identity();
-        }
+    @Override
+    public String getUsername() {
+        return accountDetails.getUsername();
+    }
 
-        public UserBuilder roles(String... roles) {
+    @Override
+    public boolean isAccountNonExpired() {
+        return authenticationDetails.isAccountNonExpired();
+    }
 
-            List<Authority> authorities = new ArrayList<>(roles.length);
+    @Override
+    public boolean isAccountNonLocked() {
+        return authenticationDetails.isAccountNonLocked();
+    }
 
-            for (String role : roles) {
-                Assert.isTrue(
-                    !role.startsWith("ROLE_"),
-                    () -> role + " cannot start with ROLE_ (it is automatically added)"
-                );
-                authorities.add(new Authority("ROLE_" + role));
-            }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return authenticationDetails.isCredentialsNonExpired();
+    }
 
-            return authorities(authorities);
-        }
+    @Override
+    public boolean isEnabled() {
+        return authenticationDetails.isEnabled();
+    }
 
-        public UserBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
-            this.passwordEncoder = passwordEncoder;
-            return this;
-        }
+    public UUID getId() {
+        return accountDetails.getUserId();
+    }
 
-        public User build() {
-            String encodedPassword = this.passwordEncoder.apply(this.password);
-
-            return new User(
-                this.id,
-                this.username,
-                this.email,
-                encodedPassword,
-                this.authorities,
-                this.accountNonExpired,
-                this.accountNonLocked,
-                this.credentialsNonExpired,
-                this.enabled
-            );
-        }
+    public String getEmail() {
+        return accountDetails.getEmail();
     }
 }

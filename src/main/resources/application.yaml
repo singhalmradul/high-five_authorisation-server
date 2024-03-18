@@ -5,9 +5,9 @@ eureka:
 
 logging:
   level:
-    org:
-      springframework:
-        security: DEBUG
+    web: DEBUG
+    security: DEBUG
+    sql: DEBUG
 
 server:
   port: 9000
@@ -16,21 +16,29 @@ spring:
   application:
     name: authorization-server
 
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
+    username: postgres
+    password: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   security:
     oauth2:
       authorizationserver:
+        issuer: http://localhost:9000
         client:
-          public-client:
+          high-five:
             registration:
-              client-id: 'public-client'
+              client-id:  high-five
               client-authentication-methods:
-                - 'none'
+                - none
               authorization-grant-types:
-                - 'authorization_code'
+                - authorization_code
               redirect-uris:
-                - 'http://localhost:3000/callback'
+                - http://localhost:3000
               scopes:
-                - 'openid'
-                - 'profile'
+                - openid
+                - profile
             require-authorization-consent: true
             require-proof-key: true

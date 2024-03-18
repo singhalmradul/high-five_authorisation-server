@@ -1,4 +1,4 @@
-package io.github.singhalmradul.authorizationserver.model;
+package io.github.singhalmradul.authorizationserver.model.user;
 
 import static jakarta.persistence.GenerationType.UUID;
 
@@ -13,24 +13,27 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Entity
+@Table(name = "authority")
 @JsonDeserialize
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Authority implements GrantedAuthority {
+public class Authority implements GrantedAuthority, Comparable<Authority>{
 
     @Id
     @GeneratedValue(strategy = UUID)
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @NonNull
-    @Column(unique = true, nullable = false)
+    @Column(name = "role", unique = true, nullable = false)
     private String role;
 
     // ---------------------------------------------------------------------------------------------------
@@ -56,5 +59,13 @@ public class Authority implements GrantedAuthority {
     @Override
     public int hashCode() {
         return role.hashCode();
+    }
+
+    @Override
+    public int compareTo(Authority other) {
+        if(other == null) {
+            return 1;
+        }
+        return this.role.compareTo(other.role);
     }
 }
