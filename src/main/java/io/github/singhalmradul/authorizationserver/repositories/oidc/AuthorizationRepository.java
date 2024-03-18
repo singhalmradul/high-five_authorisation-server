@@ -1,4 +1,4 @@
-package io.github.singhalmradul.authorizationserver.repositories;
+package io.github.singhalmradul.authorizationserver.repositories.oidc;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import io.github.singhalmradul.authorizationserver.model.Authorization;
+import io.github.singhalmradul.authorizationserver.model.oidc.Authorization;
 
 @Repository
 public interface AuthorizationRepository extends JpaRepository<Authorization, UUID> {

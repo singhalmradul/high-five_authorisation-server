@@ -26,8 +26,8 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
-import io.github.singhalmradul.authorizationserver.model.Client;
-import io.github.singhalmradul.authorizationserver.repositories.ClientRepository;
+import io.github.singhalmradul.authorizationserver.model.oidc.Client;
+import io.github.singhalmradul.authorizationserver.repositories.oidc.ClientRepository;
 
 
 @Component

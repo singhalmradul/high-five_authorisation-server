@@ -35,7 +35,7 @@ html {
 	font-style: normal;
 }
 
-.login {
+.form-container {
 	display: flex;
 	align-items: center;
 	justify-content: center;

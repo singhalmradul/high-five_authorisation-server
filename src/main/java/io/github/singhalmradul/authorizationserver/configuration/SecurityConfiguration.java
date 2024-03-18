@@ -56,7 +56,7 @@ public class SecurityConfiguration {
             .exceptionHandling(exceptions ->
                 exceptions
                     .defaultAuthenticationEntryPointFor(
-                        new LoginUrlAuthenticationEntryPoint("/login"),
+                        new LoginUrlAuthenticationEntryPoint("/log-in"),
                         new MediaTypeRequestMatcher(TEXT_HTML)
                     )
             )

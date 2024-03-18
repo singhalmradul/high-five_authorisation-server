@@ -8,7 +8,6 @@ logging:
     security: DEBUG
     sql: DEBUG
 
-
 server:
   port: 8080
 
@@ -16,21 +15,12 @@ spring:
   application:
     name: authorization-server
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/high-five
-    username: postgres
-    password: postgres
   jpa:
     defer-datasource-initialization: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     show-sql: true
     hibernate:
       ddl-auto: create-drop
-  sql:
-    init:
-      mode: always
-      platform: postgres
 
   security:
     oauth2:
@@ -41,9 +31,9 @@ spring:
             registration:
               client-id:  high-five
               client-authentication-methods:
-                - 'none'
+                - none
               authorization-grant-types:
-                - 'authorization_code'
+                - authorization_code
               redirect-uris:
                 - http://localhost:3000
               scopes:

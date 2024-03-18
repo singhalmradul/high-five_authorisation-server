@@ -1,13 +1,13 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
 
 logging:
   level:
-    org:
-      springframework:
-        security: DEBUG
+    web: DEBUG
+    security: DEBUG
+    sql: DEBUG
 
 server:
   port: 9000
@@ -16,14 +16,27 @@ spring:
   application:
     name: authorization-server
 
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
+    username: postgres
+    password: postgres
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+  sql:
+    init:
+      mode: always
+      platform: postgres
+
   security:
     oauth2:
       authorizationserver:
         issuer: http://localhost:9000
         client:
-          public-client:
+          high-five:
             registration:
-              client-id: high-five
+              client-id:  high-five
               client-authentication-methods:
                 - none
               authorization-grant-types:
@@ -35,7 +48,3 @@ spring:
                 - profile
             require-authorization-consent: true
             require-proof-key: true
-  sql:
-    init:
-      mode: always
-      platform: postgres
