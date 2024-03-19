@@ -20,7 +20,9 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import io.github.singhalmradul.authorizationserver.utilities.PersistentBagConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -63,6 +65,7 @@ public class User implements UserDetails, CredentialsContainer {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
+    @JsonSerialize(converter = PersistentBagConverter.class)
     private Collection<Authority> authorities;
 
     @Column(name = "account_non_expired", nullable = false)
@@ -78,6 +81,7 @@ public class User implements UserDetails, CredentialsContainer {
     private boolean enabled;
 
     // -------------------------------------------------------------------------------------------------
+    @JsonIgnore
     @Override
     public String getUsername() {
         return id.toString();
