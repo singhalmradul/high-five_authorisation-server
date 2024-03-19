@@ -60,14 +60,9 @@ CREATE TABLE IF NOT EXISTS oidc_authorization_consent (
     PRIMARY KEY (registered_client_id, principal_name)
 );
 
-CREATE TABLE IF NOT EXISTS user_account_details (
-    user_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    username VARCHAR(15) UNIQUE NOT NULL,
-    email VARCHAR(63) UNIQUE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_authentication_details (
-    user_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS user_details (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    email VARCHAR(63) UNIQUE NOT NULL,
     password VARCHAR(68) NOT NULL,
     account_non_expired BOOLEAN DEFAULT TRUE NOT NULL,
     account_non_locked BOOLEAN DEFAULT TRUE NOT NULL,
@@ -83,7 +78,7 @@ CREATE TABLE IF NOT EXISTS user_authority (
     user_id UUID NOT NULL,
     authority_id UUID NOT NULL,
     PRIMARY KEY (user_id, authority_id),
-    FOREIGN KEY (user_id) REFERENCES user_data(id),
+    FOREIGN KEY (user_id) REFERENCES user_details(id),
     FOREIGN KEY (authority_id) REFERENCES authority(id)
 );
 

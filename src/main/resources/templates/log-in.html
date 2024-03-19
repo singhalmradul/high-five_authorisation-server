@@ -19,15 +19,15 @@
 				<h2>log in</h2>
 
 				<h2 th:if="${param.error != null}" class="error">
-					invalid username or password
+					email or password is incorrect
 				</h2>
 
-				<label for="username or email">username or email</label>
+				<label for="username or email">email</label>
 				<input
 					type="text"
-					name="username-or-email"
-					placeholder="username or email"
-					id="username or email"
+					name="email"
+					placeholder="email"
+					id="email"
 					required
 					autofocus
 				/>
