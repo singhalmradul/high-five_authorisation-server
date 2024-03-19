@@ -24,15 +24,18 @@ public class JpaUserDetailsService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserAuthenticationDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         var accountDetails = accountDetailsRespository.findByUsernameOrEmail(username)
-                .orElseThrow(
-                        () -> new UsernameNotFoundException("User not found with username: " + username));
+            .orElseThrow(
+                    () -> new UsernameNotFoundException("User not found with username: " + username)
+            );
         var authenticationDetails = authenticationDetailsRepository.findById(accountDetails.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+            .orElseThrow(
+                () -> new UsernameNotFoundException("User not found with username: " + username)
+            );
 
-        return new User(accountDetails, authenticationDetails);
+        return authenticationDetails;
     }
 
     public User saveUserWithDetials(SignUpUser signUpUser) {
