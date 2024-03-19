@@ -15,10 +15,15 @@ import java.util.UUID;
 import java.util.function.UnaryOperator;
 
 import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import io.github.singhalmradul.authorizationserver.utilities.UserAuthenticationDetailsJsonDeserializer;
+import io.github.singhalmradul.authorizationserver.utilities.UserAuthenticationDetialsJsonSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +43,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(builderMethodName = "builder")
-public class UserAuthenticationDetails implements CredentialsContainer {
+@JsonSerialize(using = UserAuthenticationDetialsJsonSerializer.class)
+@JsonDeserialize(using = UserAuthenticationDetailsJsonDeserializer.class)
+public class UserAuthenticationDetails implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = UUID)
@@ -69,76 +76,78 @@ public class UserAuthenticationDetails implements CredentialsContainer {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
+    // -------------------------------------------------------------------------------------------------
+    @Override
+    public String getUsername() {
+        return userId.toString();
+    }
+
     @Override
     public void eraseCredentials() {
         password = null;
     }
 
-
     // -------------------------------------------------------------------------------------------------
     public static final class UserAuthenticationDetailsBuilder {
 
+        private UUID id;
+        private String password;
+        private Collection<Authority> authorities;
+        private boolean accountNonExpired = true;
+        private boolean accountNonLocked = true;
+        private boolean credentialsNonExpired = true;
+        private boolean enabled = true;
+        private UnaryOperator<String> passwordEncoder;
 
-    private UUID id;
-    private String password;
-    private Collection<Authority> authorities;
-    private boolean accountNonExpired = true;
-    private boolean accountNonLocked = true;
-    private boolean credentialsNonExpired = true;
-    private boolean enabled = true;
-    private UnaryOperator<String> passwordEncoder;
-
-    UserAuthenticationDetailsBuilder() {
-
-        passwordEncoder = UnaryOperator.identity();
-    }
-
-
-    public UserAuthenticationDetailsBuilder authorities(Collection<Authority> authorities) {
-        this.authorities = authorities;
-        return this;
-    }
-
-    public UserAuthenticationDetailsBuilder authorities(Authority... authorities) {
-        return authorities(asList(authorities));
-    }
-
-    public UserAuthenticationDetailsBuilder roles(String... roles) {
-
-        List<Authority> authorities = new ArrayList<>(roles.length);
-
-        for (String role : roles) {
-            Assert.isTrue(
-                !role.startsWith("ROLE_"),
-                () -> role + " cannot start with ROLE_ (it is automatically added)"
-            );
-            authorities.add(new Authority("ROLE_" + role));
+        UserAuthenticationDetailsBuilder() {
+            passwordEncoder = UnaryOperator.identity();
         }
 
-        return authorities(authorities);
-    }
+        public UserAuthenticationDetailsBuilder authorities(Collection<Authority> authorities) {
+            this.authorities = authorities;
+            return this;
+        }
 
-    public UserAuthenticationDetailsBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-        return this;
-    }
+        public UserAuthenticationDetailsBuilder authorities(Authority... authorities) {
+            return authorities(asList(authorities));
+        }
 
-    public UserAuthenticationDetails build() {
-        String encodedPassword = this.passwordEncoder.apply(this.password);
-        SortedSet<Authority> sortedAuthorities = new TreeSet<>(
-            (a, b) -> a != null ? a.compareTo(b) : -1
-        );
-        sortedAuthorities.addAll(this.authorities);
+        public UserAuthenticationDetailsBuilder roles(String... roles) {
 
-        return new UserAuthenticationDetails(
-            this.id,
-            encodedPassword,
-            sortedAuthorities, // specified by UserDetails interface
-            this.accountNonExpired,
-            this.accountNonLocked,
-            this.credentialsNonExpired,
-            this.enabled
-        );
+            List<Authority> authorities = new ArrayList<>(roles.length);
+
+            for (String role : roles) {
+                Assert.isTrue(
+                    !role.startsWith("ROLE_"),
+                    () -> role + " cannot start with ROLE_ (it is automatically added)"
+                );
+                authorities.add(new Authority("ROLE_" + role));
+            }
+
+            return authorities(authorities);
+        }
+
+        public UserAuthenticationDetailsBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+            return this;
+        }
+
+        public UserAuthenticationDetails build() {
+            String encodedPassword = this.passwordEncoder.apply(this.password);
+            SortedSet<Authority> sortedAuthorities = new TreeSet<>(
+                (a, b) -> a != null ? a.compareTo(b) : -1
+            );
+            sortedAuthorities.addAll(this.authorities);
+
+            return new UserAuthenticationDetails(
+                this.id,
+                encodedPassword,
+                sortedAuthorities, // specified by UserDetails interface
+                this.accountNonExpired,
+                this.accountNonLocked,
+                this.credentialsNonExpired,
+                this.enabled
+            );
+        }
     }
-}
 }
