@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
     transactionManagerRef = "oidcTransactionManager"
 )
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class OidcDatabaseConfiguratio {
+public class OidcDatabaseConfiguration {
 
     Environment env;
 
@@ -39,6 +39,7 @@ public class OidcDatabaseConfiguratio {
         return DataSourceBuilder.create().build();
     }
 
+    @Primary
     @Bean
     LocalContainerEntityManagerFactoryBean oidcEntityManagerFactory() {
         var entityManager = new LocalContainerEntityManagerFactoryBean();

@@ -1,17 +1,17 @@
 oidc:
-  jdbcUrl: ${OIDC_POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
-  username: ${OIDC_POSTGRES_USERNAME:postgres}
-  password: ${OIDC_POSTGRES_PASSWORD:postgres}
-  dialect: org.hibernate.dialect.PostgreSQLDialect
-
-shared:
-  jdbcUrl: ${SHARED_POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
-  username: ${SHARED_POSTGRES_USERNAME:postgres}
-  password: ${SHARED_POSTGRES_PASSWORD:postgres}
-  dialect: org.hibernate.dialect.PostgreSQLDialect
+  jdbcUrl: ${DB_1_URL:jdbc:postgresql://localhost:5432/high-five}
+  username: ${DB_1_USERNAME:postgres}
+  password: ${DB_1_PASSWORD:postgres}
+  dialect: ${DB_1_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
 
 user:
-  jdbcUrl: ${USER_POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
-  username: ${USER_POSTGRES_USERNAME:postgres}
-  password: ${USER_POSTGRES_PASSWORD:postgres}
-  dialect: org.hibernate.dialect.PostgreSQLDialect
+  jdbcUrl: ${DB_2_URL:jdbc:postgresql://localhost:5432/high-five}
+  username: ${DB_2_USERNAME:postgres}
+  password: ${DB_2_PASSWORD:postgres}
+  dialect: ${DB_2_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
+
+shared:
+  jdbcUrl: ${DB_3_URL:jdbc:postgresql://localhost:5432/high-five}
+  username: ${DB_3_USERNAME:postgres}
+  password: ${DB_3_PASSWORD:postgres}
+  dialect: ${DB_3_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
