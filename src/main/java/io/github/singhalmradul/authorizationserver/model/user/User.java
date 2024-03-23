@@ -22,8 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.github.singhalmradul.authorizationserver.utilities.UserAuthenticationDetailsJsonDeserializer;
-import io.github.singhalmradul.authorizationserver.utilities.UserAuthenticationDetialsJsonSerializer;
+import io.github.singhalmradul.authorizationserver.utilities.PersistentBagConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,25 +31,29 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_authentication_details")
+@Table(name = "user_details")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(builderMethodName = "builder")
-@JsonSerialize(using = UserAuthenticationDetialsJsonSerializer.class)
-@JsonDeserialize(using = UserAuthenticationDetailsJsonDeserializer.class)
-public class UserAuthenticationDetails implements UserDetails, CredentialsContainer {
+@JsonDeserialize
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = UUID)
-    @Column(name = "user_id", updatable = false, nullable = false)
-    private UUID userId;
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
+
+    @Email
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
     @JsonIgnore
     @Column(name = "password", length = 68, nullable = false)
@@ -62,6 +65,7 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
+    @JsonSerialize(converter = PersistentBagConverter.class)
     private Collection<Authority> authorities;
 
     @Column(name = "account_non_expired", nullable = false)
@@ -77,9 +81,10 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
     private boolean enabled;
 
     // -------------------------------------------------------------------------------------------------
+    @JsonIgnore
     @Override
     public String getUsername() {
-        return userId.toString();
+        return id.toString();
     }
 
     @Override
@@ -88,9 +93,10 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
     }
 
     // -------------------------------------------------------------------------------------------------
-    public static final class UserAuthenticationDetailsBuilder {
+    public static final class UserBuilder {
 
         private UUID id;
+        private String email;
         private String password;
         private Collection<Authority> authorities;
         private boolean accountNonExpired = true;
@@ -99,20 +105,20 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
         private boolean enabled = true;
         private UnaryOperator<String> passwordEncoder;
 
-        UserAuthenticationDetailsBuilder() {
+        UserBuilder() {
             passwordEncoder = UnaryOperator.identity();
         }
 
-        public UserAuthenticationDetailsBuilder authorities(Collection<Authority> authorities) {
+        public UserBuilder authorities(Collection<Authority> authorities) {
             this.authorities = authorities;
             return this;
         }
 
-        public UserAuthenticationDetailsBuilder authorities(Authority... authorities) {
+        public UserBuilder authorities(Authority... authorities) {
             return authorities(asList(authorities));
         }
 
-        public UserAuthenticationDetailsBuilder roles(String... roles) {
+        public UserBuilder roles(String... roles) {
 
             List<Authority> authorities = new ArrayList<>(roles.length);
 
@@ -127,20 +133,22 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
             return authorities(authorities);
         }
 
-        public UserAuthenticationDetailsBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
+        public UserBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
             this.passwordEncoder = passwordEncoder;
             return this;
         }
 
-        public UserAuthenticationDetails build() {
+        public User build() {
             String encodedPassword = this.passwordEncoder.apply(this.password);
             SortedSet<Authority> sortedAuthorities = new TreeSet<>(
                 (a, b) -> a != null ? a.compareTo(b) : -1
             );
-            sortedAuthorities.addAll(this.authorities);
+            if (this.authorities != null)
+                sortedAuthorities.addAll(this.authorities);
 
-            return new UserAuthenticationDetails(
+            return new User(
                 this.id,
+                this.email,
                 encodedPassword,
                 sortedAuthorities, // specified by UserDetails interface
                 this.accountNonExpired,
