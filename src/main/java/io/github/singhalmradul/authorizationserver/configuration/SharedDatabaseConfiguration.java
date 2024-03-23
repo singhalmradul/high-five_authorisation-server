@@ -22,41 +22,41 @@ import lombok.AllArgsConstructor;
 @Configuration
 @PropertySource(value = "classpath:db.yaml", factory = YamlPropertySourceFactory.class)
 @EnableJpaRepositories(
-    basePackages = "io.github.singhalmradul.authorizationserver.repositories.user",
-    entityManagerFactoryRef = "userEntityManagerFactory",
-    transactionManagerRef = "userTransactionManager"
+    basePackages = "io.github.singhalmradul.authorizationserver.repositories.shared",
+    entityManagerFactoryRef = "sharedEntityManagerFactory",
+    transactionManagerRef = "sharedTransactionManager"
 )
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class UserDatabaseConfiguration {
+public class SharedDatabaseConfiguration {
 
     Environment env;
 
     @Bean
-    @ConfigurationProperties(prefix = "user")
-    DataSource userDataSource() {
+    @ConfigurationProperties(prefix = "shared")
+    DataSource sharedDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    LocalContainerEntityManagerFactoryBean userEntityManagerFactory() {
+    LocalContainerEntityManagerFactoryBean sharedEntityManagerFactory() {
         var entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(userDataSource());
-        entityManager.setPackagesToScan("io.github.singhalmradul.authorizationserver.model.user");
+        entityManager.setDataSource(sharedDataSource());
+        entityManager.setPackagesToScan("io.github.singhalmradul.authorizationserver.model.shared");
 
         var vendorAdapter = new HibernateJpaVendorAdapter();
         entityManager.setJpaVendorAdapter(vendorAdapter);
 
         var properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
-        properties.put("hibernate.dialect", env.getProperty("user.dialect"));
+        properties.put("hibernate.dialect", env.getProperty("shared.dialect"));
         entityManager.setJpaProperties(properties);
         return entityManager;
     }
 
     @Bean
-    JpaTransactionManager userTransactionManager() {
+    JpaTransactionManager sharedTransactionManager() {
         var transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(userEntityManagerFactory().getObject());
+        transactionManager.setEntityManagerFactory(sharedEntityManagerFactory().getObject());
 
         return transactionManager;
     }

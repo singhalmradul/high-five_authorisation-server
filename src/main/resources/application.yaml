@@ -16,12 +16,9 @@ spring:
   application:
     name: authorization-server
 
-  datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
-    username: postgres
-    password: postgres
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
 
   security:
     oauth2:
