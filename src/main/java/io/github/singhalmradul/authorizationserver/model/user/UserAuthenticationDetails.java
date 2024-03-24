@@ -31,29 +31,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_details")
+@Table(name = "user_authentication_details")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(builderMethodName = "builder")
+@Builder
 @JsonDeserialize
-public class User implements UserDetails, CredentialsContainer {
+public class UserAuthenticationDetails implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
-
-    @Email
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
+    @Column(name = "user_id", updatable = false, nullable = false)
+    private UUID userId;
 
     @JsonIgnore
     @Column(name = "password", length = 68, nullable = false)
@@ -84,19 +79,19 @@ public class User implements UserDetails, CredentialsContainer {
     @JsonIgnore
     @Override
     public String getUsername() {
-        return id.toString();
+        return this.userId.toString();
     }
 
     @Override
     public void eraseCredentials() {
-        password = null;
+        this.password = null;
     }
 
     // -------------------------------------------------------------------------------------------------
-    public static final class UserBuilder {
+
+    public static final class UserAuthenticationDetailsBuilder {
 
         private UUID id;
-        private String email;
         private String password;
         private Collection<Authority> authorities;
         private boolean accountNonExpired = true;
@@ -105,20 +100,20 @@ public class User implements UserDetails, CredentialsContainer {
         private boolean enabled = true;
         private UnaryOperator<String> passwordEncoder;
 
-        UserBuilder() {
+        private UserAuthenticationDetailsBuilder() {
             passwordEncoder = UnaryOperator.identity();
         }
 
-        public UserBuilder authorities(Collection<Authority> authorities) {
+        public UserAuthenticationDetailsBuilder authorities(Collection<Authority> authorities) {
             this.authorities = authorities;
             return this;
         }
 
-        public UserBuilder authorities(Authority... authorities) {
+        public UserAuthenticationDetailsBuilder authorities(Authority... authorities) {
             return authorities(asList(authorities));
         }
 
-        public UserBuilder roles(String... roles) {
+        public UserAuthenticationDetailsBuilder roles(String... roles) {
 
             List<Authority> authorities = new ArrayList<>(roles.length);
 
@@ -133,12 +128,12 @@ public class User implements UserDetails, CredentialsContainer {
             return authorities(authorities);
         }
 
-        public UserBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
+        public UserAuthenticationDetailsBuilder passwordEncoder(UnaryOperator<String> passwordEncoder) {
             this.passwordEncoder = passwordEncoder;
             return this;
         }
 
-        public User build() {
+        public UserAuthenticationDetails build() {
             String encodedPassword = this.passwordEncoder.apply(this.password);
             SortedSet<Authority> sortedAuthorities = new TreeSet<>(
                 (a, b) -> a != null ? a.compareTo(b) : -1
@@ -146,9 +141,8 @@ public class User implements UserDetails, CredentialsContainer {
             if (this.authorities != null)
                 sortedAuthorities.addAll(this.authorities);
 
-            return new User(
+            return new UserAuthenticationDetails(
                 this.id,
-                this.email,
                 encodedPassword,
                 sortedAuthorities, // specified by UserDetails interface
                 this.accountNonExpired,

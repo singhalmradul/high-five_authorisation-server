@@ -1,11 +1,13 @@
 package io.github.singhalmradul.authorizationserver.services;
 
 import io.github.singhalmradul.authorizationserver.model.SignUpUser;
-import io.github.singhalmradul.authorizationserver.model.user.User;
+import io.github.singhalmradul.authorizationserver.model.User;
+import io.github.singhalmradul.authorizationserver.model.user.UserAuthenticationDetails;
 
 public interface JpaUserDetailsService {
 
-    User loadUserByUsername(String email);
+    UserAuthenticationDetails getByUsernameOrEmail(String username);
 
     User saveUserWithDetials(SignUpUser signUpUser);
+
 }

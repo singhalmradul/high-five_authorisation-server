@@ -31,6 +31,19 @@
 					autofocus
 				/>
 
+				<label for="username">pick a username</label>
+				<input
+					type="text"
+					th:field="*{username}"
+					placeholder="username"
+					id="username"
+					minlength="1"
+					maxlength="15"
+					pattern="^[a-z][a-z0-9]*$"
+					title="username must contain only lowercase letters and numbers, begin with a letter, and maximum 15 characters long"
+					required
+				/>
+
 				<label for="password">password</label>
 				<input
 					type="password"

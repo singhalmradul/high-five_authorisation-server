@@ -1,15 +1,8 @@
 oidc:
-<<<<<<< HEAD
   jdbcUrl: ${DB_1_URL:jdbc:postgresql://localhost:5432/high-five}
   username: ${DB_1_USERNAME:postgres}
   password: ${DB_1_PASSWORD:postgres}
   dialect: ${DB_1_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
-=======
-  jdbcUrl: ${OIDC_POSTGRES_URL:jdbc:postgresql://localhost:5432/high-five}
-  username: ${OIDC_POSTGRES_USERNAME:postgres}
-  password: ${OIDC_POSTGRES_PASSWORD:postgres}
-  dialect: org.hibernate.dialect.PostgreSQLDialect
->>>>>>> origin/master
 
 user:
   jdbcUrl: ${DB_2_URL:jdbc:postgresql://localhost:5432/high-five}
