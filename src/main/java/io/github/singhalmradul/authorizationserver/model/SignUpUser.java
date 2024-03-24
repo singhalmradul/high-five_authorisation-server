@@ -10,7 +10,7 @@ public class SignUpUser {
     private String password;
     private String confirmPassword;
 
-    public boolean doesPasswordsMatch() {
-        return password.equals(confirmPassword);
+    public boolean isPasswordMismatch() {
+        return !password.equals(confirmPassword);
     }
 }

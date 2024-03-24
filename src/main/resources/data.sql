@@ -30,7 +30,7 @@ INSERT INTO oidc_client (
     'openid,profile',
     -- client_settings
     '{
-        "@class":"java.util.HashMap",jdbcUrl
+        "@class":"java.util.HashMap",
         "settings.client.require-proof-key":true,
         "settings.client.require-authorization-consent":true
     }',

@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.github.singhalmradul.authorizationserver.utilities.PersistentBagConverter;
@@ -40,7 +41,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(builderMethodName = "builder")
+@Builder
+@JsonDeserialize
 public class UserAuthenticationDetails implements UserDetails, CredentialsContainer {
 
     @Id
@@ -74,17 +76,19 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
     private boolean enabled;
 
     // -------------------------------------------------------------------------------------------------
+    @JsonIgnore
     @Override
     public String getUsername() {
-        return userId.toString();
+        return this.userId.toString();
     }
 
     @Override
     public void eraseCredentials() {
-        password = null;
+        this.password = null;
     }
 
     // -------------------------------------------------------------------------------------------------
+
     public static final class UserAuthenticationDetailsBuilder {
 
         private UUID id;
@@ -96,7 +100,7 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
         private boolean enabled = true;
         private UnaryOperator<String> passwordEncoder;
 
-        UserAuthenticationDetailsBuilder() {
+        private UserAuthenticationDetailsBuilder() {
             passwordEncoder = UnaryOperator.identity();
         }
 
@@ -134,7 +138,8 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
             SortedSet<Authority> sortedAuthorities = new TreeSet<>(
                 (a, b) -> a != null ? a.compareTo(b) : -1
             );
-            sortedAuthorities.addAll(this.authorities);
+            if (this.authorities != null)
+                sortedAuthorities.addAll(this.authorities);
 
             return new UserAuthenticationDetails(
                 this.id,
