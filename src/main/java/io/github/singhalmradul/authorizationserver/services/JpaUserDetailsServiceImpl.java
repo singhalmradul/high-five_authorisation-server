@@ -54,17 +54,23 @@ public class JpaUserDetailsServiceImpl implements UserDetailsService, JpaUserDet
         if (accountDetailsRespository.existsByUsername(signUpUser.getUsername())) {
             throw new UsernameNotFoundException("username is not available");
         }
-
-        var accountDetails = UserAccountDetails.builder()
-            .username(signUpUser.getUsername())
-            .email(signUpUser.getEmail())
-            .build();
-
         var authenticationDetails = UserAuthenticationDetails.builder()
             .passwordEncoder(passwordEncoder::encode)
             .password(signUpUser.getPassword())
             .roles("USER")
             .build();
+
+        authenticationDetails = authenticationDetailsRepository.save(authenticationDetails);
+
+        var accountDetails = UserAccountDetails.builder()
+            .userId(authenticationDetails.getUserId())
+            .username(signUpUser.getUsername())
+            .email(signUpUser.getEmail())
+            .build();
+
+        accountDetails = accountDetailsRespository.save(accountDetails);
+
+
 
         return new User(accountDetails, authenticationDetails);
     }

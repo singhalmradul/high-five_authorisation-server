@@ -1,12 +1,9 @@
 package io.github.singhalmradul.authorizationserver.model.shared;
 
-import static jakarta.persistence.GenerationType.UUID;
-
 import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -25,7 +22,6 @@ import lombok.NoArgsConstructor;
 public class UserAccountDetails {
 
     @Id
-    @GeneratedValue(strategy = UUID)
     @Column(name = "user_id", updatable = false, nullable = false)
     private UUID userId;
 
