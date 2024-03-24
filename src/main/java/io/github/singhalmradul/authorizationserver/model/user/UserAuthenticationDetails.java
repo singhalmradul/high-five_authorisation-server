@@ -19,11 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.github.singhalmradul.authorizationserver.utilities.UserAuthenticationDetailsJsonDeserializer;
-import io.github.singhalmradul.authorizationserver.utilities.UserAuthenticationDetialsJsonSerializer;
+import io.github.singhalmradul.authorizationserver.utilities.PersistentBagConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,8 +41,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(builderMethodName = "builder")
-@JsonSerialize(using = UserAuthenticationDetialsJsonSerializer.class)
-@JsonDeserialize(using = UserAuthenticationDetailsJsonDeserializer.class)
 public class UserAuthenticationDetails implements UserDetails, CredentialsContainer {
 
     @Id
@@ -62,6 +58,7 @@ public class UserAuthenticationDetails implements UserDetails, CredentialsContai
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
+    @JsonSerialize(converter = PersistentBagConverter.class)
     private Collection<Authority> authorities;
 
     @Column(name = "account_non_expired", nullable = false)
