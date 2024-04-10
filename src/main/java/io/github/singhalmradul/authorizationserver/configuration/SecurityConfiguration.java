@@ -87,7 +87,6 @@ public class SecurityConfiguration {
             // Form login handles the redirect to the login page from the
             // authorization server filter chain
             .formLogin(form->form.loginPage("/log-in").usernameParameter("username-or-email").permitAll());
-            // .formLogin(withDefaults());
 
         return http.cors(withDefaults()).build();
     }
@@ -104,14 +103,4 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-    // @Bean
-    // InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-
-    //     UserDetails user = withUsername("user")
-    //         .password("{noop}password")
-    //         .authorities("ROLE_USER")
-    //         .build();
-    //     return new InMemoryUserDetailsManager(user);
-    // }
 }
