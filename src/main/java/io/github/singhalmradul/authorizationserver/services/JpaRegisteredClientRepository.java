@@ -53,7 +53,6 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 
-    @SuppressWarnings("null")
     @Override
     public void save(RegisteredClient registeredClient) {
 
@@ -62,7 +61,6 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         this.clientRepository.save(toEntity(registeredClient));
     }
 
-    @SuppressWarnings("null")
     @Override
     public RegisteredClient findById(String id) {
 
