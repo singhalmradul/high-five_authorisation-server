@@ -36,7 +36,6 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
         this.registeredClientRepository = registeredClientRepository;
     }
 
-    @SuppressWarnings("null")
     @Override
     public void save(OAuth2AuthorizationConsent authorizationConsent) {
 
@@ -82,7 +81,6 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
             );
         }
 
-        @SuppressWarnings("null")
         OAuth2AuthorizationConsent.Builder builder = OAuth2AuthorizationConsent.withId(
             registeredClientId,
             authorizationConsent.getPrincipalName()

@@ -28,7 +28,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.singhalmradul.authorizationserver.model.oidc.Authorization;
 import io.github.singhalmradul.authorizationserver.repositories.oidc.AuthorizationRepository;
 
-@Component
+// @Component
 public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService {
     private final AuthorizationRepository authorizationRepository;
     private final RegisteredClientRepository registeredClientRepository;
@@ -62,7 +61,6 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 
-    @SuppressWarnings("null")
     @Override
     public void save(OAuth2Authorization authorization) {
 
@@ -71,7 +69,6 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         this.authorizationRepository.save(toEntity(authorization));
     }
 
-    @SuppressWarnings("null")
     @Override
     public void remove(OAuth2Authorization authorization) {
 
@@ -80,7 +77,6 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         this.authorizationRepository.deleteById(UUID.fromString(authorization.getId()));
     }
 
-    @SuppressWarnings("null")
     @Override
     public OAuth2Authorization findById(String id) {
 
