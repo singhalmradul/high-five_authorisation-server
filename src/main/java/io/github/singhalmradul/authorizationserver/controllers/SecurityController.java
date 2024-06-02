@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import io.github.singhalmradul.authorizationserver.exceptions.SignUpException;
 import io.github.singhalmradul.authorizationserver.model.SignUpUser;
 import io.github.singhalmradul.authorizationserver.services.JpaUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public class SecurityController {
 
         try {
             jpaUserDetailsService.saveUserWithDetials(user);
-        } catch (UsernameNotFoundException e) { // targeted exceptions are wrapped in UsernameNotFoundException
+        } catch (UsernameNotFoundException | SignUpException e) { // some targeted exceptions are wrapped in UsernameNotFoundException
             model.addAttribute("error", e.getMessage());
 
             return "sign-up";

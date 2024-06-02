@@ -7,6 +7,7 @@ import static org.springframework.security.oauth2.server.authorization.config.an
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -22,18 +23,21 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @formatter:off
  */
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class SecurityConfiguration {
 
     @Qualifier("jpaUserDetailsService")
-    UserDetailsService userDetailsService;
+    final UserDetailsService userDetailsService;
+
+    @Value("${cors.allowed-origin:http://localhost:3000}")
+    String allowedOrigin;
 
     PasswordEncoder passwordEncoder;
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -98,7 +102,7 @@ public class SecurityConfiguration {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin(allowedOrigin);
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return source;
