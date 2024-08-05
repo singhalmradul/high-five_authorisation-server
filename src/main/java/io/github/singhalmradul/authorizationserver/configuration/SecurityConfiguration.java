@@ -90,7 +90,7 @@ public class SecurityConfiguration {
             )
             // Form login handles the redirect to the login page from the
             // authorization server filter chain
-            .formLogin(form->form.loginPage("/log-in").usernameParameter("username-or-email").permitAll());
+            .formLogin(form -> form.loginPage("/log-in").usernameParameter("username-or-email").permitAll());
 
         return http.cors(withDefaults()).build();
     }

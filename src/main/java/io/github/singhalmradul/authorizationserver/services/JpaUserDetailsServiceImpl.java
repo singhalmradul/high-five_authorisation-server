@@ -22,6 +22,7 @@ public class JpaUserDetailsServiceImpl implements UserDetailsService, JpaUserDet
     private UserAccountDetailsRespository accountDetailsRespository;
     private UserAuthenticationDetailsRepository authenticationDetailsRepository;
     private PasswordEncoder passwordEncoder;
+    private AmpqService ampqService;
 
     @Override
     public UserAuthenticationDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -33,7 +34,7 @@ public class JpaUserDetailsServiceImpl implements UserDetailsService, JpaUserDet
     public UserAuthenticationDetails getByUsernameOrEmail(String username) {
         var accountDetails = accountDetailsRespository.findByUsernameOrEmail(username)
             .orElseThrow(
-                    () -> new UsernameNotFoundException("User not found with username: " + username)
+                () -> new UsernameNotFoundException("User not found with username: " + username)
             );
         return authenticationDetailsRepository.findById(accountDetails.getUserId())
             .orElseThrow(
@@ -70,7 +71,7 @@ public class JpaUserDetailsServiceImpl implements UserDetailsService, JpaUserDet
 
         accountDetails = accountDetailsRespository.save(accountDetails);
 
-
+        ampqService.sendMessage(accountDetails);
 
         return new User(accountDetails, authenticationDetails);
     }

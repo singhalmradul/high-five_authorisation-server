@@ -2,6 +2,8 @@ package io.github.singhalmradul.authorizationserver.model.shared;
 
 import java.util.UUID;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -25,7 +27,11 @@ public class UserAccountDetails {
     @Column(name = "user_id", updatable = false, nullable = false)
     private UUID userId;
 
-    @Pattern(regexp = "^[a-z][a-z0-9]*$", message = "username must contain only lowercase letters and numbers, begin with a letter")
+    @Pattern(
+        regexp = "^[a-z][a-z0-9]*$",
+        message = "username must contain only lowercase letters and numbers, begin with a letter"
+    )
+    @Length(max = 15)
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
